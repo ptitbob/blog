@@ -1,0 +1,36 @@
+languageCode = "fr-fr"
+title = "Pris dans la toile"
+theme="cocoa"
+paginate = 9 # To specify a multiple of 3
+disqusShortname = "ptitbob"
+baseurl = "http://localhost:1313/"
+
+[params]
+  shortcode = "shipstone.org"
+  sitename = "Pris dans la toile"
+  name = "ptitbob"
+  Author = "François Robert"
+  description = "Pris dans la toile" # optiona
+  bio = "Toute connaissance ne vaut d'être aquise que si elle est partagée" # optional
+  enableRSS = false
+  twitter = "ptitbob" # optional
+  github = "ptitbob" # optional
+  linkedin = "robertfrancois" # optional
+  headerCover = "images/Expression.jpg" # optional
+  footerCover = "images/footerCover.png" # optional
+
+  iconFont = "font-awesome"
+
+  DateForm = "00 Jan 2006"
+  DateFormFull = "Mon Jan 2 2006 15:04:05 MST"
+
+  copyright = "Make with ❤︎ by ptitbob"
+
+[permalinks]
+  post = "/:year/:month/:day/:title/" # optional
+
+[social]
+  twitter  = "https://twitter.com/ptitbob"
+  github   = "https://github.com/ptitbob"
+  linkedin = "https://fr.linkedin.com/in/robertfrancois"
+
