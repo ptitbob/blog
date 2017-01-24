@@ -1,0 +1,155 @@
++++
+date = "2016-05-25T00:50:11+02:00"
+description = "haproxy et træfik sont sur un bateau"
+title = "Reecriture d'URL via un proxy"
+metadesctiption = "comparaison entre Traefik, HAProxy et nginx comme reverse proxy et de réécriure d'URL"
+words = [ "Docker", "Traefik", "HAProxy", "NGinX", "reverse-Proxy", "reecriture URL" ]
+tags = [ "Docker", "Traefik", "HAProxy", "NGinX" ]
++++
+
+Je suis fan de https://www.docker.com/[docker], la possibilité de tout containériser ouvre des possibilités quasi infini en terme de developpement, deploiement (même si Quentin Adam modère la chose, cf http://www.shipstone.org/2016/05/11/devoxx-france-2016/[mon post sur le retour de devoxx 2016]). Mais surtout avec la possibilité de reproduire un envirronement "complexe" de "prod" simplement et sans polluer sa machine.
+
+Toutes les sources sont hébergées sur github : https://github.com/ptitbob/rewriteurl[ptitbob/rewriteurl].
+
+`update 30/05/2016 : Test de NGinX ajouté`
+
+== La réecriture d'URL
+
+Pourquoi réécrire les URLs ? Tout simplement parce qu'un micro service déployé ne presente pas le root attendu dans un paysage d'applications basées sur les micro-service.
+
+Un exemple, votre application, et là je parle de webApp (écrite en Angular2 - par exemple et sans parti pris - aucun), communique avec des services basés sur la même URL de base. Imaginons par exemple, que votre application ai besoin de recupérer la liste des membres de votre association. Votre application est accéssible à l'adresse `www.superasso.org`, et donc l'accès aux services concernant les membres de votre association sera `www.superasso.org/members` (classique).
+
+Jusque là, rien de choquant me direz vous. Sauf que votre service lié au membres expose son API à la racine de son URL. Donc le proxy aura pour tache de passer de `www.superasso.org/members` à un appel sur un container contenant votre service en supprimant spécifiquement la partie de l'URL d'entrée. Un peu comme ça :
+
+image::/images/post/rewriteurl/rewriteurl_base01.png[]
+
+Le proxy agit de telle manière que l'appel d'une methode de l'API du service A `www.superasso.org/members/[IdMembre]/history` soit redirigé sur le bon service avec l'URL corrigée : `[host service A]/[IdMembre]/history`.
+
+== HAProxy et Træfik
+
+Alors en terme de proxy, le premier qui vient à l'esprit est http://www.haproxy.org/[HAProxy]. Simple, éprouvé, en developpement actif depuis 2001. Il permet la réécriture d'URL via l'emploi d'une regex et gère le load-balancing. Que demander de plus. C'est donc le candidat idéal.
+
+Puis vous allez à Devoxx France et vous entendez parler de https://traefik.io/[træfik] ! Proxy codé en https://golang.org/[go(lang)] à l'origine par un gars de chez Zenika : Emile Vauge. Il gère comme HAProxy la redirection, le load balancing, mais il sait aussi s'interfacer avec Docker ou des orchestrateurs (swarm, etc...), utiliser let's encrypt, la liste de ses capacités est longue et ne cesse de s'agrandir. Son créateur a fait une conférence à Devoxx pour le https://youtu.be/QvAz9mVx5TI[présenter]. Le fait qu'il soit codé en Go laisse présager de bonnes performances et titille mon enthousiasme. _Il fallait donc que je le test_ !
+
+J'entends dans la salle, pourquoi ne pas utiliser http://nginx.org/[nginx] ? C'est légitime et l'objet de l'update de ce post. NGinX est un serveur web avec de solides possibilités de proxy et load-balancing. Je ne l'avais pas inclus dans mon test, car je suis pour les solutions qui ne font qu'une seule chose et qui le font bien c'est pourquoi je l'avais écarté initialement de mon test. Cependant, j'ai décidé de l'inclure car NGinX fait partie des solutions qui ont aussi le vent en poupe.
+
+Il ne reste plus qu'a les comparer.
+
+=== Architecture et protocole de test
+
+J'ai décidé de la jouer simple, a savoir que mes services seront reptrésentés par des serveurs nginx servant qu'une seule page et partageant la même configuration. Pour chaque "service", j'ai mis en place 2 serveurs afin de jouer avec le load balancing (^2^/~3~ des requêtes iront sur les instances A et ^1^/~3~ iront sur les instances B). Les deux services auront pour URL : `http://localhost/web1` et `http://localhost/web2` sachant que si on interroge les serveurs directement (vous pouvez les exposer sur un port différent par serveur & différent de 80), les sous url `web1` et `web2` ne sont pas connues.
+
+Voici la partie du fichier *`docker-compose.yml`* décrivant l'architecture des serveurs front (les services) :
+
+{{< gist ptitbob 2a121ba8b3f5f1e1bbd0703b79b2c901 >}}
+
+Pour tester tout cela, on peut utiliser cURL, HTTPie ou même un browser... Mais ce n'est pas très fun et surtout cela ne permet pas de tester la resistance à la charge. Donc pour cela j'ai créé deux série de scénarios http://gatling.io/#/[Gatling] (outil de test de stress), un simple qui envoi simplement 3 requêtes par URL afin de verifier si tout fonctionne bien et que le load-balancing est actif. Et le second qui va permettre de les départager en terme de temps de réponse et de nombre d'erreur lors du transfert.
+
+Le test simple :
+
+{{< gist ptitbob e34bf3d1d13161aa1cfc38153ae3587e >}}
+
+Et le test de charge :
+
+{{< gist ptitbob 5a7fe550fccdc3bcbe7e8b2963166e16 >}}
+
+== HAProxy
+
+http://www.haproxy.org/[HAProxy] est une solution de load balancing et proxy. Sorti en version 1 en 2001, il continu son petit bonhomme de chemin.
+
+Il beneficie d'une image officielle sur le https://hub.docker.com/_/haproxy/[hub docker], celle qui est utilisée dans l'exemple. Voici la portion du fichier `docker-compose.ha.yml` qui decrit ce container :
+
+{{< gist ptitbob fd7e301fcf86d1fe599274c4b5b9a63e >}}
+
+La redirection et la réécriture sont décrites dans le fichier de configuration haproxy `/haproxy/haproxy.cfg` :
+
+{{< gist ptitbob 4e1040ba0befee252c174b8f538ffcf6 >}}
+
+Le réécriture d'URL est dirigée par les lignes 15 & 23 respectivement pour les serveurs 1 et 2. Maintenant nous pouvons lancer le sccénario de test simple sur les containers décrit dans le fichier `docker-compose.ha.yml` et regarder leurs comportements :
+
+{{< asciinema 6dcxngf0a3s1a0ue9umdpbllq >}}
+
+Well done !! Vous remarquerez que les serveurs A ont été solicités 2 fois plus que les serveurs B (réponse 200 puis réponse 304) correspondant aux règles de load-balancing décrites.
+
+== Traefik
+
+https://traefik.io/[Træfik] est le petit dernier dans la famille des proxy, et il est clairement celui qui offre le plus de possiblités. Comme je l'ai dit plus haut, en plus de réaliser tout ce que l'on attends d'un proxy, il s'interface avec des orchestrateurs comme Docker, Kubernetes, etc... Mais il expose une API Rest afin de gérer la configuration, et permet aussi la gestion du rechargement à chaud de la configuration lors d'un changement du fichier de config. Son écosysteme, quoiqu'encore tout neuf, est vivant et enthousiaste comme en témoigne les deux derniers plugins sortis (https://github.com/containous/flaeg[containous/flaeg] et https://github.com/containous/staert[containous/staert]). Il presente une interface de gestion très agréable (réalisée avec Angular) - qui dans mon cas sera exposé sous le port 9000.
+
+De plus, il bénéficie depuis le début d'une https://hub.docker.com/r/_/traefik/[image officielle docker] basé sur la distribution alpine, donc très légère.
+
+Voici le fragment de la déclaration dans le fichier `docker-compose.traefik.yml`.
+
+{{< gist ptitbob 621ad47dc397b0ae930323dacbe363b6 >}}
+
+Le fichier de configuration est au format toml, voici le fragment de configuration pour les serveurs :
+{{< gist ptitbob 9f869270d9c375d238459e5118aa98eb >}}
+
+La réécriture d'URL se passe par la définition d'une "route" en definissant une règle de remplacement avec le mot clé `PathPrefixStrip` et le texte du fragment à supprimer (lignes 28 & 33), simple, non ? :). Regardons le comportement au test simple :
+
+{{< asciinema 07h2ejziuvlfs9opqqxxlyu9e >}}
+
+Comme pour haproxy, le comportement est le même, donc nous avons 2 systèmes qui répondent "fonctionnellement" exactement de la même manière, reste maintenant a les tester sous la charge et selectionner le vainqueur.
+
+== NGinX
+
+`update 30/05/2016`
+
+http://nginx.org/[NGinX] est un serveur web, je dirais même avant d'être un proxy, c'est pourquoi je ne l'avais pas inclus dans mon comparatif initialement. Mais certaines discussions m'ont porté a l'inclure. Il permet de gérer du load-balancing et de la récriture d'URL, à la manière de HAProxy via l'utilisation de RegEx. Par contre il n'apporte pas nativement d'interface de monitoring. Celle-ci existe, sous forme d'addon (https://www.nginx.com/products/live-activity-monitoring/[NGinX plus]), mais seulement disponible à travers la version payante. Loin de moi de juger le faite de mettre à disposition cette partie là payante, si cela permet de faire vivre le projet, c'est ce qu'il faut. Car NGinX est un serveur web très performant et surtout facile à configurer.
+
+Commençons par l'inclusion du serveur NGinX servant de proxy dans l'architecture :
+
+{{< gist ptitbob d373c3494470d362defabb359c257431 >}}
+
+Maintenant, la configuration de NGinX pour assurer le load-balancing et la réécriture d'URL.
+
+{{< gist ptitbob 5bc09186086cc40c0de1b35f02e61eae >}}
+
+La réécriture d'URL se passe ligne 13 et 17.
+
+Donc hormis la presence d'une interface de monitoring visuelle, nous devrions avoir le même fonctionnement :
+
+{{< asciinema 3zn5xxhksrbx2h5gebpoydb0n >}}
+
+== Le match
+
+Pour les tests, il faut reconnaitre que je ne suis pas un pro des tests de performances. Donc j'ai essayé d'être aussi rigoureux que je puisse. J'ai mis en place un protocole afin de tester les deux configuration dans un état le plus semblable possible:
+
+Pour chaque test, HAProxy puis Træfik, j'ai redémarré mon ordinateur (_MacBookPro late 2010, 8G de ram et SSD - MacOSX 10.11.5_) en réalisant une vidange de la PRAM, attendu le temps que tous les processus de lancement du mac soient terminés. Puis j'ai réalisé la séquence suivante 5 fois (pour l'occasion, docker était en lancement manuel) :
+
+* démarrage de docker - _pause de 30 secondes_
+* lancement des containers (via `docker-compose`) - _pause de 10 secondes_
+* lancement des scénarios de stress gatling
+* suppression des containers
+* arrêt de Docker
+
+Voici les résultats, je n'ai retenu que 6 valeurs que j'ai trouvé significatives :
+
+.Resultats
+[options="header"]
+|===========
+|proxy|t < 800 | 800 < t < 1200 | t > 1200 | deviation std | request/sec | erreur
+.6+^.^|*_HAProxy_*|1929|44|25|267|142,857|2
+|1814|95|73|333|153,846|18
+|1967|4|28|240|153,846|1
+|1928|55|16|291|142,857|1
+|1749|237|13|336|142,857|1
+|*1877,4*|*87*|*31*|*293,4*|*147,2526*|*4,6*
+.6+^.^|*_Træfik_*|2000|0|0|25|181,818|0
+|2000|0|0|17|191,818|0
+|1983|17|0|106|181,818|0
+|1928|28|4|161|181,818|0
+|1992|8|0|91|200|0
+|*1980,6*|*10,6*|*0,8*|*80*|*187,4544*|*0*
+.6+^.^|*_NGinX_*|1974|26|0|127|181,818|0
+|2000|0|0|42|181,818|0
+|2000|0|0|32|181,818|0
+|1912|33|53|282|153,846|0
+|1979|21|0|174|166,667|0
+|*1973*|*16*|*10,6*|*131,4*|*173,1934*|*0*
+|===========
+
+Træfik le petit dernier (pas encore à la version 1 au moment des tests), gagne le match de la performance. Mais pas seulement, la configuration est agréable (je n'ai pas encore testé l'interfaçage avec Docker, cela fera l'occasion d'un autre post), l'interface de gestion (je vous laisse la découvrir) est très agréable. Que du bon !!!
+
+`update 30/05/2016` NGinX tire son épingle du jeu en faisant presque jeu égale avec Træfik ! Cette solution peut être interressante si vous voulez héberger votre partie statique (sources `HTML` / `CSS` / `J(T)S`) - sans vraiment vouloir faire du load-balancing sur cette partie - et permettre la redirection simplement.
+
+Mais, pour enfoncer le clou, je suis pour la séparation des responsabilités, donc l'architecture Træfik reste pour moi le meilleur choix pour toutes les raisons exposées précedement.
