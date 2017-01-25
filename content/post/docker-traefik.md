@@ -1,9 +1,11 @@
 +++
 date = "2017-01-25T00:21:22+01:00"
-description = ""
+description = "Mécanisme de découvete des container par Traefik"
 title = "Docker, Traefik et les reseaux"
 draft = false
 tags = [ "Docker", "Traefik" ]
+metadescription = "Comprendre la decouverte des container par Traefik et son mécanisme de liaison avec l'envirronement Docker. Le tout soupoudré d'un debut de commencement d'explication du fonctionnement des reseaux docker"
+words = [ "Docker", "Traefik", "network", "reseau" ]
 +++
 
 Intégration Docker API / Treafik avec gestion des domaines/sous domaine
