@@ -2,7 +2,7 @@
 date = "2017-01-25T00:21:22+01:00"
 description = ""
 title = "Docker, Traefik et les reseaux"
-draft = true
+draft = false
 tags = [ "Docker", "Traefik" ]
 +++
 
@@ -128,7 +128,7 @@ et
 docker-compose -f front/docker-compose.front2.yml up
 ```
 
-Et si vous regardez dans le console Traefik, vous les verrez apparaitre ! *C'est de la magie ? Non, c'est Traefik et Docker* :bowtie: 
+Et si vous regardez dans le console Traefik, vous les verrez apparaitre ! *C'est de la magie ? Non, c'est Traefik et Docker*
 
 Vous pouvez tester l'exposition (j'utilise [```httpstat```](https://github.com/reorx/httpstat) pour visualiser le timelaps) : 
 
@@ -159,6 +159,6 @@ Body stored in: /var/folders/h8/0qx72_294gjfxsjcky4nw74m0000gn/T/tmpxrReof
                                                                  total:17ms
 ```
 
-Ça fonctionne, tout simplement. Vous noterez au passage que Traefik y laisse sa patte, ***pensez à supprimer cette possibilité en prod*** :stuck_out_tongue_closed_eyes:
+Ça fonctionne, tout simplement. Vous noterez au passage que Traefik y laisse sa patte, ***pensez à supprimer cette possibilité en prod***
 
 ***Have fun***
