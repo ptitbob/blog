@@ -2,7 +2,7 @@
 date = "2016-05-25T00:50:11+02:00"
 description = "haproxy et træfik sont sur un bateau"
 title = "Reecriture d'URL via un proxy"
-metadesctiption = "comparaison entre Traefik, HAProxy et nginx comme reverse proxy et de réécriure d'URL"
+metadescription = "comparaison entre Traefik, HAProxy et nginx comme reverse proxy et de réécriure d'URL"
 words = [ "Docker", "Traefik", "HAProxy", "NGinX", "reverse-Proxy", "reecriture URL" ]
 tags = [ "Docker", "Traefik", "HAProxy", "NGinX" ]
 +++

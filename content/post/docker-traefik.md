@@ -1,9 +1,11 @@
 +++
 date = "2017-01-25T00:21:22+01:00"
-description = ""
+description = "Mécanisme de découvete des container par Traefik"
 title = "Docker, Traefik et les reseaux"
-draft = true
+draft = false
 tags = [ "Docker", "Traefik" ]
+metadescription = "Comprendre la decouverte des container par Traefik et son mécanisme de liaison avec l'envirronement Docker. Le tout soupoudré d'un debut de commencement d'explication du fonctionnement des reseaux docker"
+words = [ "Docker", "Traefik", "network", "reseau" ]
 +++
 
 Intégration Docker API / Treafik avec gestion des domaines/sous domaine
@@ -128,7 +130,7 @@ et
 docker-compose -f front/docker-compose.front2.yml up
 ```
 
-Et si vous regardez dans le console Traefik, vous les verrez apparaitre ! *C'est de la magie ? Non, c'est Traefik et Docker* :bowtie: 
+Et si vous regardez dans le console Traefik, vous les verrez apparaitre ! *C'est de la magie ? Non, c'est Traefik et Docker*
 
 Vous pouvez tester l'exposition (j'utilise [```httpstat```](https://github.com/reorx/httpstat) pour visualiser le timelaps) : 
 
@@ -159,6 +161,6 @@ Body stored in: /var/folders/h8/0qx72_294gjfxsjcky4nw74m0000gn/T/tmpxrReof
                                                                  total:17ms
 ```
 
-Ça fonctionne, tout simplement. Vous noterez au passage que Traefik y laisse sa patte, ***pensez à supprimer cette possibilité en prod*** :stuck_out_tongue_closed_eyes:
+Ça fonctionne, tout simplement. Vous noterez au passage que Traefik y laisse sa patte, ***pensez à supprimer cette possibilité en prod***
 
 ***Have fun***
