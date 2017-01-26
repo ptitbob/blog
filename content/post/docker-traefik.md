@@ -122,14 +122,14 @@ Nous y configurons (dans l'ordre d'apparition) :
 * On fixe le protocole utilisé - *Petit rappel : Traefik joue avec de l'HTTP2, ce qui veux dire que par défaut, il sert du https (port 443)*.
 * Le poid du backend, utilisé pour le load balancing.
 
-Maintenant, on peut lancer les container de nos fronts : 
+Maintenant, on peut lancer les container de nos fronts (en mode deamon avec l'option ```-d```) : 
 
 ```
-docker-compose -f front/docker-compose.front1.yml up
+docker-compose -f front/docker-compose.front1.yml up -d
 ```
 et
 ```
-docker-compose -f front/docker-compose.front2.yml up
+docker-compose -f front/docker-compose.front2.yml up -d
 ```
 
 Et si vous regardez dans le console Traefik, vous les verrez apparaitre ! *C'est de la magie ? Non, c'est Traefik et Docker*
@@ -169,4 +169,24 @@ Body stored in: /var/folders/h8/0qx72_294gjfxsjcky4nw74m0000gn/T/tmpxrReof
 
 Ça fonctionne, tout simplement. Vous noterez au passage que Traefik y laisse sa patte, ***pensez à supprimer cette possibilité en prod***
 
+Pour arreter les conteneurs front, lancer les commandes suivante : 
+
+```docker-compose -f docker-compose.front1.yml stop```
+
+et
+
+```docker-compose -f docker-compose.front2.yml stop```
+
+Et la console n'affichera plus que la route vers le container de Traefik.
+
 ***Have fun***
+
+**Nota bene** : l'image de traefik ne pese que 17 Mo (comparé au 182 Mo de nGinx) :
+
+```
+[~]$ docker image ls
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+nginx               latest              cc1b61406712        2 days ago          182 MB
+traefik             latest              221c4fde0f62        6 weeks ago         16.7 MB
+```
+
