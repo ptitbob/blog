@@ -96,6 +96,8 @@ docker-compose -f traefik/docker-compose.traefik.yml up
 ```
 Une fois cela fait, vous pouvez ouvrir la console Traefik, et voir qu'une seule route a été créer en mappant le domaine de base sur le container de Traefik.
 
+![console Traefik](/images/post/traefik-docker/traefik-alone.png)
+
 Maintenant, comment configurer Traefik pour que les containers décrits dans mes deux fichiers compose (```docker-compose.front1.yml``` et ```docker-compose.front2.yml```) soit pris en compte ?
 
 L'astuce reside dans le fait de decaler les informations de configuration du reverse-proxy de chaque container au niveau des labels exposé par ceux-ci et que Traefik pourra interpreter via sa liaison sur l'API Docker.
@@ -131,6 +133,10 @@ docker-compose -f front/docker-compose.front2.yml up
 ```
 
 Et si vous regardez dans le console Traefik, vous les verrez apparaitre ! *C'est de la magie ? Non, c'est Traefik et Docker*
+
+![Console docker avec les 2 routes créée](/images/post/traefik-docker/traefik-full.png)
+
+Vous remarquerez que j'ai poussé le vice a gérer le load-balancing, soit avec des poids identique (front 2), soit avec des poids différents (front 1).
 
 Vous pouvez tester l'exposition (j'utilise [```httpstat```](https://github.com/reorx/httpstat) pour visualiser le timelaps) : 
 
