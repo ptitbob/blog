@@ -138,36 +138,15 @@ Et si vous regardez dans le console Traefik, vous les verrez apparaitre ! *C'est
 
 Vous remarquerez que j'ai poussé le vice a gérer le load-balancing, soit avec des poids identique (front 2), soit avec des poids différents (front 1).
 
-Vous pouvez tester l'exposition (j'utilise [```httpstat```](https://github.com/reorx/httpstat) pour visualiser le timelaps) : 
+Vous pouvez tester l'exposition (j'utilise [```httpstat```](https://github.com/reorx/httpstat) pour visualiser le timelaps) en lançant la commande :
 
-```
-$ httpstat web2.shipstone.local
-Connected to 127.0.0.1:80 from 127.0.0.1:59866
+```httpstat web2.shipstone.local```, vous pouvez voir le résultat ci-dessous : 
 
-HTTP/1.1 200 OK
-Accept-Ranges: bytes
-Cache-Control: max-age=0
-Content-Length: 1002
-Content-Type: text/html
-Date: Thu, 15 Dec 2016 21:57:34 GMT
-Etag: "5851c79c-3ea"
-Expires: Thu, 15 Dec 2016 21:57:34 GMT
-Last-Modified: Wed, 14 Dec 2016 22:28:44 GMT
-Server: nginx/1.11.6
-Set-Cookie: _TRAEFIK_BACKEND=http://172.18.0.6:80
+{{< asciinema cq5all9tkf0520eq10vlxmqz8 >}}
 
-Body stored in: /var/folders/h8/0qx72_294gjfxsjcky4nw74m0000gn/T/tmpxrReof
+Ça fonctionne, tout simplement.
 
-  DNS Lookup   TCP Connection   Server Processing   Content Transfer
-[     5ms    |       1ms      |       10ms        |        1ms       ]
-             |                |                   |                  |
-    namelookup:5ms            |                   |                  |
-                        connect:6ms               |                  |
-                                      starttransfer:16ms             |
-                                                                 total:17ms
-```
-
-Ça fonctionne, tout simplement. Vous noterez au passage que Traefik y laisse sa patte, ***pensez à supprimer cette possibilité en prod***
+Vous noterez au passage que Traefik y laisse sa patte, ***pensez à supprimer cette possibilité en prod***
 
 Pour arreter les conteneurs front, lancer les commandes suivante : 
 
