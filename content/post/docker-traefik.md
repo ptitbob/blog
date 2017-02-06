@@ -24,7 +24,7 @@ Cette interaction permet la prise en compte des container monté en tant que rou
 >
 > Mais nous verrons cela plus loin.
 
-Nous étion parti sur le principe de créer un reseau via le fichier descriptif docker-compose.
+Nous étions partis sur le principe de créer un reseau via le fichier descriptif docker-compose.
 Mais il s'est avéré que docker-compose va créer un réseau en le préfixant avec le nom du repertoire ou se trouve le fichier.
 Ce prefixage peut être modéré en fixant un nom de projet comme cela (```-p``` indique un nom de projet) :
 
