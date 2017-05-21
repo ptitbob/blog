@@ -1,7 +1,7 @@
 +++
 date = "2017-05-21T01:05:38+02:00"
 description = "Injection du logger avec le framework Spring"
-draft = true
+draft = false
 tags = ["spring"]
 title = "Injection du logger"
 words = ["spring","injection", "logger"]
