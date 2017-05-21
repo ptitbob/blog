@@ -2,7 +2,7 @@
 date = "2016-12-24T10:35:26+01:00"
 description = ""
 title = "POSTer avec ou sans body"
-tags = [ "REST", "RESTFul" ]
+tags = [ "REST", "RESTFul", "JavaEE" ]
 +++
 
 > telle est la question...
