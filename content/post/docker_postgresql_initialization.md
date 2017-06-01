@@ -28,15 +28,15 @@ Tous mes fichiers d'initialisation se trouvent dans le sous répertoire `sql`, c
 | `00_initialization.sql` | Initialisation de la base (schéma, autorisation, ect) |
 | `10_structure.sql` | Structure de la base (table, trigger, etc...) |
 
-Le reste des fichiers (`20_regions.sql`, `25_districts.sql`, `30_cities.sql`) contient les scripts d'insertion des données (*en l'occurence, la liste des régions, département et leur chef-lieu et autres ville d'importance*).
+Le reste des fichiers (`20_regions.sql`, `25_districts.sql`, `30_cities.sql`) contiennent les scripts d'insertion des données (*en l'occurence, la liste des régions, département et leur chef-lieu et autres ville d'importance*).
 
-Vous pouvez trouver les sources de cette exemple dans mon [repository github](https://github.com/ptitbob/docker_postgresql_initialization).
+Vous pouvez trouver les sources de cet exemple dans mon [repository github](https://github.com/ptitbob/docker_postgresql_initialization).
 
-Pour tester cette exemple, lancez le fichier compose se trouvant la racine : 
+Pour tester cet exemple, lancez le fichier `docher-compose` se trouvant la racine : 
 
 **`docker-compose -f docker-compose.postgres.yml up`**
 
-Ensuite vous pourrez vous connecter à la base ainsi initialisé via [pgAdmin](https://www.pgadmin.org/) (par exemple)
+Ensuite vous pourrez vous connecter à la base ainsi initialisée via [pgAdmin](https://www.pgadmin.org/) (par exemple)
 
 | champs | valeur |
 |--------|--------|
