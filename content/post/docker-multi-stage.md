@@ -1,7 +1,7 @@
 +++
 date = "2017-06-18T16:50:16+02:00"
 description = "Petit exemple d'utilisation du build multi-stage pour une application Spring"
-draft = true
+draft = false
 title = "Docker multi-stage"
 tags = ["docker", "spring", "java"]
 words = ["docker", "multi-stage", "build"]
