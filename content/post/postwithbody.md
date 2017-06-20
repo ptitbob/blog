@@ -1,6 +1,6 @@
 +++
 date = "2016-06-17T10:35:26+01:00"
-description = "... ou comment implementer le retour ou non dans le body d'un POST"
+description = "Comment implementer le retour ou non dans le body d'un POST (JAXRS ou SpringMVC)"
 title = "POSTer avec ou sans body"
 tags = [ "REST", "RESTFul", "JavaEE", "Spring" ]
 words = ["REST", "RESTFul", "JavaEE", "Spring"]
