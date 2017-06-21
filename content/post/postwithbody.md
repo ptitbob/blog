@@ -99,7 +99,7 @@ Rien de bien différent au final.
 
 #### Les appel à l'API
 
-> Les deux implémentations expose exactement la même API...
+> Les deux implémentations exposent exactement la même API...
 
 ##### Appel sans demande spécifique de format de réponse
 
