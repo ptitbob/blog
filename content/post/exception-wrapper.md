@@ -2,7 +2,7 @@
 title = "SpringMVC et les exceptions"
 date = "2017-06-21T19:49:41+02:00"
 description = "Comment traiter les réponses et les erreurs avec SpringMVC"
-draft = true
+draft = false
 tags = ["spring"]
 words = ["spring","SpringMVC", "exception", "wrapper"]
 metadescription = "Gestion des erreurs et traitement des exception dans le cadre d'une application SpringMVC exposant une API REST"
@@ -195,5 +195,7 @@ L'execution de ces tests **doit rester un acte volontaire**, comme pour une mont
 
 Dans mes test, j'ai essayé un maximun de ne pas utiliser d'import static afin de montrer ou se trouvent les méthode statique du frmaework Mockito (afin de mocker certains comportement) et framework de test d'intégration de Spring.
 J'utilise Mockito afin de forcer un comportement à certaines méthodes, ce qui correspond à des cas de tests.
+
+*Pour les appel, j'utilise [HTTPie](https://github.com/jkbrzt/httpie), c'est quand même plus lisible qu'avec un cURL des familles* :)
 
 *Have fun...*
